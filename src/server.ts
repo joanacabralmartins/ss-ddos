@@ -1,4 +1,5 @@
 import express, { Request, Response, ErrorRequestHandler } from 'express';
+import { rateLimit } from 'express-rate-limit'
 import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -7,6 +8,14 @@ import apiRoutes from './routes/routes';
 dotenv.config();
 
 const server = express();
+
+// regra de limite de taxa 
+const limiter = rateLimit({ 
+    windowMs: 1 * 60 * 1000, // 1 minuto 
+    limit: 2 // limita cada IP a 2 solicitações por windowMs 
+})
+
+server.use(limiter);
 
 server.use(cors());
 
