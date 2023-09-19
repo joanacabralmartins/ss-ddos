@@ -12,7 +12,8 @@ const server = express();
 // regra de limite de taxa 
 const limiter = rateLimit({ 
     windowMs: 1 * 60 * 1000, // 1 minuto 
-    limit: 2 // limita cada IP a 2 solicitações por windowMs 
+    limit: 2, // limita cada IP a 2 solicitações por windowMs 
+    message: 'Você enviou muitas solicitações. Aguarde um pouco e tente novamente após 1 minuto',
 })
 
 server.use(limiter);
