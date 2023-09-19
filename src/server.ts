@@ -1,5 +1,6 @@
 import express, { Request, Response, ErrorRequestHandler } from 'express';
-import { rateLimit } from 'express-rate-limit'
+import rateLimit from 'express-rate-limit';
+import logger from './logger';
 import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -11,12 +12,20 @@ const server = express();
 
 // regra de limite de taxa 
 const limiter = rateLimit({ 
-    windowMs: 1 * 60 * 1000, // 1 minuto 
-    limit: 2, // limita cada IP a 2 solicitações por windowMs 
-    message: 'Você enviou muitas solicitações. Aguarde um pouco e tente novamente após 1 minuto',
+    windowMs: 15 * 60 * 1000, // 15 minutos 
+    limit: 50, // limita cada IP a 50 solicitações por windowMs 
+    message: 'Você enviou muitas solicitações. Aguarde um pouco e tente novamente mais tarde.',
 })
 
 server.use(limiter);
+
+server.use((req, res, next) => {
+    logger.log({
+      level: 'info',
+      message: `${req.method} ${req.url}`,
+    });
+    next();
+  });
 
 server.use(cors());
 
